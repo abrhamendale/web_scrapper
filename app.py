@@ -47,5 +47,6 @@ def input():
 @app.route('/<string:key>', methods=['GET'])
 def search(key):
     print(key)
-    items = scrap(key)
+    if key:
+        items = scrap(key)
     return render_template('web_index.html', posts=items)

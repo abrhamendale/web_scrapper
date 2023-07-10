@@ -19,6 +19,10 @@
 }
 .headers{
 	order: 1;
+	justify-content: space-between;
+	align-items: center;
+	padding-left: 50px;
+	padding-right: 50px;
 }
 .search-bar{
 	order: 2;
@@ -68,7 +72,7 @@
 	width: 1600px;
 	border: thin grey;
 	border-style: groove;
-	border-radius: 25px;
+	border-radius: 15px;
 	align-items: center;
 	justify-content: center;
 	padding: 20px;
