@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>
+		Comparo
+	</title>
+	<link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+	<div class="container">
+		<h3 class="headers">
+			<font face="Lato" size="6" align="left">COMPARO</font>
+			<font face="Lato" size="6" align="right">
+				<a href="#">ABOUT</a>
+			</font>
+		</h3>
+		<form method="post" class="search-bar">
+			<input type="text" name="title" value="{{ request.form['title'] }}" placeholder="Search anything" ></input>
+			<button type="submit"><img src="images/search.png"></button>
+		</form>
+			<br />
+		<div class="list">
+			{% block content %} {% endblock %}
+		</div>
+	</div>
+</body>
+</html>

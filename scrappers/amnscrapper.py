@@ -86,11 +86,13 @@ def amn_queuer(item):
     # The webpage URL
     #URL = "https://www.amazon.com/s?k=&ref=nb_sb_noss_2"
     URL = "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords="+item
+    #URL = "https://www.amazon.com/s?k=" + item + "&crid=2PLVGX4VJVEWU&sprefix=gtx4090%2Caps%2C797&ref=nb_sb_noss_1"
     # HTTP Request
     webpage = requests.get(URL, headers=HEADERS)
     #print(webpage.content)
     # Soup Object containing all data
     soup = BeautifulSoup(webpage.content, "lxml")
+    print(webpage.content)
     # Fetch links as List of Tag Objects
     links = soup.find_all("a", attrs={'class':'a-link-normal s-no-outline'})
     # Store the links
@@ -114,6 +116,7 @@ def amn_queuer(item):
         #        price = float(price[1:].replace(',', ''))
 
         items_data.append({
+                        'Website': 'Amazon',
                         'Link': 'https://www.amazon.com/' + link,
                         'Title': get_title(new_soup),
                         'Price[$]': price,

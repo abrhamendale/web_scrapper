@@ -1,18 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Welcome to FlaskBlog {% endblock %}</h1>
-     {% for post in posts %}
-         <a href="#">
-	     <h2>{{ post['Title'] }}</h2>
-	 </a>
-	 <h3>Price[$]: {{ post['Price[$]'] }}</h3>
-	 <h3>Condition: {{ post['Condition'] }}</h3>
-	 <h3>Top_rated: {{ post['Top_rated'] }}</h3>
-	 <h3>Reviews: {{ post['Reviews'] }}</h3>
-	 <h3>Availability: {{ post['Availability'] }}</h3>
-	 <h3>Delivery: {{ post['Delivery'] }}</h3>
-	 <span class="badge badge-primary">{{ post['created'] }}</span>
-	 <hr>
-     {% endfor %}
+    <h1 align="center">{% block title %} Search {% endblock %}</h1>
+    {% for post in posts %}
+    <div style="width:1250px;border:thin solid grey;border-radius:20px;border-style: groove;padding:15px">
+	    <a href="#">
+		    <h2>{{ post['Title'] }}</h2>
+	    </a>
+	    <h3>Price[$]: {{ post['Price[$]'] }}</h3>
+	    <h3>Condition: {{ post['Condition'] }}</h3>
+	    <h3>Top_rated: {{ post['Top_rated'] }}</h3>
+	    <h3>Reviews: {{ post['Reviews'] }}</h3>
+	    <h3>Availability: {{ post['Availability'] }}</h3>
+	    <h3>Delivery: {{ post['Delivery'] }}</h3>
+	    <span class="badge badge-primary">{{ post['created'] }}</span>
+    </div>
+    <br>
+    {% endfor %}
 {% endblock %}

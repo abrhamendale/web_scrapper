@@ -1,0 +1,23 @@
+{% extends 'web_base.html' %}
+
+{% block content %}
+    <h1 align="center">{% block title %}{% endblock %}</h1>
+    </hr>
+    <br>
+    {% for post in posts %}
+    <div class="items">
+	    <h3>Website: {{ post['Website'] }}</h3>
+	    <a href={{ post['Link'] }}>
+                    <h2>{{ post['Title'] }}</h2>
+            </a>
+            <h3>Price[$]: {{ post['Price[$]'] }}</h3>
+            <h3>Condition: {{ post['Condition'] }}</h3>
+            <h3>Top_rated: {{ post['Top_rated'] }}</h3>
+            <h3>Reviews: {{ post['Reviews'] }}</h3>
+            <h3>Availability: {{ post['Availability'] }}</h3>
+            <h3>Delivery: {{ post['Delivery'] }}</h3>
+            <span class="badge badge-primary">{{ post['created'] }}</span>
+    </div>
+    <br>
+    {% endfor %}
+{% endblock %}

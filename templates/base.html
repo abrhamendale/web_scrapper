@@ -12,7 +12,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('index')}}">FlaskBlog</a>
+        <a class="navbar-brand" href="{{ url_for('index')}}">Compareor</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,9 +24,9 @@
             </ul>
         </div>
     </nav>
-    <form action="http://127.0.0.1:5000/" method="GET, POST" class="search-bar">
-	<input type="text" placeholder="Search anything" name="q">
-		<button type="submit"><img src="images/search.png"></button>
+    <form method="post" class="search-bar" align="center" max-width: 700px width=100% height: 55px>
+	    <input type="text" placeholder="Search anything" name="title" value="{{ request.form['title'] }}"></input>
+	    <button type="submit"><img src="images/search.jpg"></button>
     </form>
     <div class="container">
         {% block content %} {% endblock %}

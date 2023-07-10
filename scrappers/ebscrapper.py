@@ -78,6 +78,7 @@ def eb_queuer(item):
             else:
                 price = float(price[1:].replace(',', ''))
         data.append({
+            'Website': 'Ebay',
             'Link': link,
             'Title': title,
             'Price[$]': price,
