@@ -5,6 +5,7 @@ Scrapper runner
 
 
 from scrappers.amnscrapper import amn_queuer
+from scrappers.nescrapper import ne_queuer
 from scrappers.ebscrapper import eb_queuer
 from operator import itemgetter
 from flask import Flask, render_template, request, url_for, flash, redirect
@@ -20,13 +21,20 @@ def scrap(key):
     """
     Scraps the available websites.
     """
+    ne_queuer(key)
     #print(eb_queuer('Galaxy%20S23%20Black'))
-    items = [x for x in json.loads(eb_queuer(key)) + json.loads(amn_queuer(key)) if isinstance(x, dict)]
+    scrappers = json.loads(eb_queuer(key)) + json.loads(amn_queuer(key))
+    scrappers = scrappers + json.loads(ne_queuer(key))
+    items = [x for x in scrappers if isinstance(x, dict)]
     for i in items:
         #print('-----------', i['Availability'])
         if i['Availability'] == 'Not available':
             remove(i)
-    #items.sort(key=itemgetter('Price[$]'))
+        try:
+            float(i['Price[$]'])
+        except:
+            i['Price[$]'] = 0
+    items.sort(key=itemgetter('Price[$]'))
     return items
 
 

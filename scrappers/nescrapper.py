@@ -1,96 +1,151 @@
 #!/usr/bin/env python3
+"""
+Scrappes amazon
+"""
+
 
 from bs4 import BeautifulSoup
+import requests
+import time
+from random import random
 import requests, json, lxml
+import sys
 
-headers = {
-    "User-Agent":
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.19582"
-}
+# Function to extract Product Title
+def get_title(soup):
+    try:
+        # Outer Tag Object
+        title = soup.find("h1", attrs={'class':'product-title'})
+        if not title:
+            title = soup.find("span", attrs={"id":'title'})
+        # Inner NavigatableString Object
+        title_value = title.string
+        # Title as a string value
+        title_string = title_value.strip()
+        # # Printing types of values for efficient understanding
+        # print(type(title))
+        # print(type(title_value))
+        # print(type(title_string))
+        # print()
+    except AttributeError:
+        title_string = ""
+    print('title_string:', title_string)
+    return title_string
 
 
-def eb_queuer(item):
-    print("eb")
-    html = requests.get('https://www.ebay.com/sch/i.html?_nkw=' + item,
-	headers=headers).text
-    soup = BeautifulSoup(html, 'lxml')
-
-    data = []
-
-    print(len(soup.select('.s-item__wrapper.clearfix')))
-    for item in soup.select('.s-item__wrapper.clearfix'):
-        title = item.select_one('.s-item__title').text
-        link = item.select_one('.s-item__link')['href']
-
+# Function to extract Product Price
+def get_price(soup):
+    try:
+        price = soup.find("li", attrs={'class':'price-current'}).strong.string.strip()
+        price = price + soup.find("li", attrs={'class':'price-current'}).sup.string.strip()
+        if price == 'Page 1 of 1':
+            price = soup.find("span", attrs={'a-price aok-align-center reinventPricePriceToPayMargin priceToPay'}).string.strip()
+        if not price:
+            price = 'Currently unavailable'
+        #price = soup.find('span', {'id':"a-price-whole"}).text.strip()
+    except AttributeError:
         try:
-            condition = item.select_one('.SECONDARY_INFO').text
-        except:
-            condition = None
+        # If there is some deal price
+            price = soup.find("span", attrs={'id':'priceblock_dealprice'}).string.strip()
+        except:		
+            price = ""
+    print('Price:', price)
+    return price
 
+
+# Function to extract Product Rating
+def get_rating(soup):
+    try:
+        rating = soup.find("div", attrs={'class':'product-seller-rating'})
+        rating = rating.find("strong").string.strip()
+        print(rating)
+        rating = rating + soup.find("div", attrs={'class':'product-seller-rating'}).string.strip()
+    except AttributeError:
         try:
-            shipping = item.select_one('.s-item__logisticsCost').text
+            rating = soup.find("span", attrs={'class':'a-icon-alt'}).string.strip()
         except:
-            shipping = None
+            rating = ""
+    print('Rating:', rating)
+    return rating
 
-        try:
-            location = item.select_one('.s-item__itemLocation').text
-        except:
-            location = None
 
-        try:
-            watchers_sold = item.select_one('.NEGATIVE').text
-        except:
-            watchers_sold = None
+# Function to extract Number of User Reviews
+def get_review_count(soup):
+    try:
+        review_count = soup.find("span", attrs={'id':'acrCustomerReviewText'}).string.strip()
+    except AttributeError:
+        review_count = ""	
+    return review_count
+# Function to extract Availability Status
+def get_availability(soup):
+    try:
+        available = soup.find("div", attrs={'class':'product-inventory'})
+        available = available.find("strong").string.strip()
+    except AttributeError:
+        available = "Not Available"
+    print('Availability:', available)
+    return available	
 
-        if item.select_one('.s-item__etrs-badge-seller') is not None:
-            top_rated = True
-        else:
-            top_rated = False
+def ne_queuer(item):
+    """
+    Runs a function for every item data required.
+    """
+    # Headers for request
+    HEADERS = ({"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"})
+    ##{'User-Agent':
+    #'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+    #'Accept-Language': 'en-US'})*/
 
-        try:
-            bid_count = item.select_one('.s-item__bidCount').text
-        except:
-            bid_count = None
-
-        try:
-            bid_time_left = item.select_one('.s-item__time-left').text
-        except:
-            bid_time_left = None
-
-        try:
-            reviews = item.select_one('.s-item__reviews-count span').text.split(' ')[0]
-        except:
-            reviews = None
-
-        try:
-            exctention_buy_now = item.select_one('.s-item__purchase-options-with-icon').text
-        except:
-            exctention_buy_now = None
-
-        try:
-            price = item.select_one('.s-item__price').text
-        except:
-            price = None
-
+    # The webpage URL
+    #URL = "https://www.amazon.com/s?k=&ref=nb_sb_noss_2"
+    URL = "https://www.newegg.com/p/pl?d="+item
+    #URL = "https://www.amazon.com/s?k=" + item + "&crid=2PLVGX4VJVEWU&sprefix=gtx4090%2Caps%2C797&ref=nb_sb_noss_1"
+    # HTTP Request
+    webpage = requests.get(URL, headers=HEADERS)
+    #print(webpage.content)
+    # Soup Object containing all data
+    soup = BeautifulSoup(webpage.content, "lxml")
+    #print(webpage.content)
+    # Fetch links as List of Tag Objects
+    links = soup.find_all('a', attrs={'class':'item-title'})
+    # Store the links
+    links_list = []
+    # Loop for extracting links from Tag Objects
+    for link in links:
+        links_list.append(link.get('href'))
+        #print(link)
+    print('Newegg:',len(links_list))
+    # Loop for extracting product details from each link
+    items_data = []
+    for link in links_list:
+        time.sleep(5 * random())
+        new_webpage = requests.get(link, headers=HEADERS)
+        new_soup = BeautifulSoup(new_webpage.content, "lxml")
+        # Function calls to display all necessary product information
+        price = get_price(new_soup)
         if price:
-            if ' to ' in price:
-                price = float(price.split(' to ')[0][1:].replace(',', ''))
-            else:
-                price = float(price[1:].replace(',', ''))
-        data.append({
-            'Website': 'Ebay',
-            'Link': link,
-            'Title': title,
-            'Price[$]': price,
-            'Condition': condition,
-            'Top_rated': top_rated,
-            'Reviews': reviews,
-            'Availability': watchers_sold,
-            #'buy_now_extention': exctention_buy_now,
-            'Delivery': shipping,
-            'Location': location,
-            #'bids': {'count': bid_count, 'time_left': bid_time_left},
-        })
+            try:
+                price = float(price)
+            except:
+                price = ''
 
-    return (json.dumps(data, indent = 2, ensure_ascii = False))
-#get_organic_results()
+        items_data.append({
+                        'Website': 'Newegg',
+                        'Link': link,
+                        'Title': get_title(new_soup),
+                        'Price[$]': price,
+                        #'Condition': item_data['condition'],
+                        'Top_rated': get_rating(new_soup),
+                        'Reviews': get_review_count(new_soup),
+                        'Availability': get_availability(new_soup),
+                        #'buy_now_extention': exctention_buy_now,
+                        #'Delivery': shipping,
+                        #'location': location,
+                        #'bids': {'count': bid_count, 'time_left': bid_time_left},
+                        })
+    return (json.dumps(items_data, indent = 2, ensure_ascii = False))
+        #print("Product Title =", item_data.title)
+        #print("Product Price =", item_data.Price)
+        #print("Product Rating =", item_data.Rating)
+        #print("Number of Product Reviews =", item_data.Product_reviews)
+        #print("Availability =", item_data.Availability)

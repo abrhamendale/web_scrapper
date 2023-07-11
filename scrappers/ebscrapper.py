@@ -10,14 +10,13 @@ headers = {
 
 
 def eb_queuer(item):
-    print("eb")
     html = requests.get('https://www.ebay.com/sch/i.html?_nkw=' + item,
 	headers=headers).text
     soup = BeautifulSoup(html, 'lxml')
 
     data = []
 
-    print(len(soup.select('.s-item__wrapper.clearfix')))
+    print('Ebay:', len(soup.select('.s-item__wrapper.clearfix')))
     for item in soup.select('.s-item__wrapper.clearfix'):
         title = item.select_one('.s-item__title').text
         link = item.select_one('.s-item__link')['href']

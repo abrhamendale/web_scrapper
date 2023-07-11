@@ -76,7 +76,6 @@ def amn_queuer(item):
     """
     Runs a function for every item data required.
     """
-    print("amn")
     # Headers for request
     HEADERS = ({"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"})
     ##{'User-Agent':
@@ -92,7 +91,7 @@ def amn_queuer(item):
     #print(webpage.content)
     # Soup Object containing all data
     soup = BeautifulSoup(webpage.content, "lxml")
-    print(webpage.content)
+    #print(webpage.content)
     # Fetch links as List of Tag Objects
     links = soup.find_all("a", attrs={'class':'a-link-normal s-no-outline'})
     # Store the links
@@ -100,7 +99,7 @@ def amn_queuer(item):
     # Loop for extracting links from Tag Objects
     for link in links:
         links_list.append(link.get('href'))
-    print(len(links_list))
+    print('Amazon:',len(links_list))
     # Loop for extracting product details from each link
     items_data = []
     for link in links_list:
@@ -109,11 +108,11 @@ def amn_queuer(item):
         new_soup = BeautifulSoup(new_webpage.content, "lxml")
         # Function calls to display all necessary product information
         price = get_price(new_soup)
-        #if price:
-        #    if ' to ' in price:
-        #        price = float(price.split(' to ')[0][1:].replace(',', ''))
-        #    else:
-        #        price = float(price[1:].replace(',', ''))
+        if price:
+            if ' to ' in price:
+                price = float(price.split(' to ')[0][1:].replace(',', ''))
+            else:
+                price = float(price[1:].replace(',', ''))
 
         items_data.append({
                         'Website': 'Amazon',
