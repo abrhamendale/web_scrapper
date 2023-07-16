@@ -13,9 +13,7 @@ def eb_queuer(item):
     html = requests.get('https://www.ebay.com/sch/i.html?_nkw=' + item,
 	headers=headers).text
     soup = BeautifulSoup(html, 'lxml')
-
     data = []
-
     print('Ebay:', len(soup.select('.s-item__wrapper.clearfix')))
     for item in soup.select('.s-item__wrapper.clearfix'):
         title = item.select_one('.s-item__title').text
@@ -85,11 +83,7 @@ def eb_queuer(item):
             'Top_rated': top_rated,
             'Reviews': reviews,
             'Availability': watchers_sold,
-            #'buy_now_extention': exctention_buy_now,
             'Delivery': shipping,
             'Location': location,
-            #'bids': {'count': bid_count, 'time_left': bid_time_left},
         })
-
     return (json.dumps(data, indent = 2, ensure_ascii = False))
-#get_organic_results()
